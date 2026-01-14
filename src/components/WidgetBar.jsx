@@ -198,7 +198,7 @@ function WidgetBar() {
           <div className="widget-content">
             <div className="events-widget-title">Hoy ({todayEvents.length})</div>
             <div className="events-widget-list">
-              {todayEvents.slice(0, 1).map(event => (
+              {todayEvents.slice(0, 3).map(event => (
                 <div 
                   key={event.id} 
                   className="event-widget-item"
@@ -209,8 +209,8 @@ function WidgetBar() {
                   {event.time && <span className="event-widget-time">{event.time}</span>}
                 </div>
               ))}
-              {todayEvents.length > 1 && (
-                <div className="events-widget-more">+{todayEvents.length - 1} más en Calendario</div>
+              {todayEvents.length > 3 && (
+                <div className="events-widget-more">+{todayEvents.length - 3} más en Calendario</div>
               )}
             </div>
           </div>

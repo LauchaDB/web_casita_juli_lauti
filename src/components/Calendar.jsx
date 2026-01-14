@@ -129,8 +129,14 @@ function Calendar({ username }) {
         <h3>📌 Próximos Eventos</h3>
         <div className="events-list">
           {events
-            .filter(event => new Date(event.date) >= new Date().setHours(0, 0, 0, 0))
-            .sort((a, b) => new Date(a.date) - new Date(b.date))
+            .filter(event => {
+              // Parsear fecha correctamente en hora local
+              const eventDate = new Date(event.date + 'T00:00:00');
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+              return eventDate >= today;
+            })
+            .sort((a, b) => new Date(a.date + 'T00:00:00') - new Date(b.date + 'T00:00:00'))
             .slice(0, 5)
             .map(event => (
               <motion.div
@@ -145,7 +151,7 @@ function Calendar({ username }) {
                 <div className="event-item-content">
                   <div className="event-item-title">{event.title}</div>
                   <div className="event-item-date">
-                    {new Date(event.date).toLocaleDateString('es-AR', { 
+                    {new Date(event.date + 'T00:00:00').toLocaleDateString('es-AR', { 
                       weekday: 'long', 
                       day: 'numeric', 
                       month: 'long' 
@@ -161,7 +167,12 @@ function Calendar({ username }) {
                 </button>
               </motion.div>
             ))}
-          {events.filter(event => new Date(event.date) >= new Date().setHours(0, 0, 0, 0)).length === 0 && (
+          {events.filter(event => {
+            const eventDate = new Date(event.date + 'T00:00:00');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return eventDate >= today;
+          }).length === 0 && (
             <p className="no-events">No hay eventos próximos</p>
           )}
         </div>
@@ -245,9 +256,9 @@ function Calendar({ username }) {
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <h3>Agregar Evento</h3>
+              <h3>{getEventsForDate(new Date(selectedDate + 'T00:00:00').getDate()).length > 0 ? 'Eventos del día' : 'Agregar Evento'}</h3>
               <p className="modal-date">
-                {new Date(selectedDate).toLocaleDateString('es-AR', {
+                {new Date(selectedDate + 'T00:00:00').toLocaleDateString('es-AR', {
                   weekday: 'long',
                   day: 'numeric',
                   month: 'long',
@@ -255,53 +266,11 @@ function Calendar({ username }) {
                 })}
               </p>
 
-              <form onSubmit={handleAddEvent}>
-                <input
-                  type="text"
-                  value={newEvent.title}
-                  onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-                  placeholder="Título del evento"
-                  className="event-input"
-                  autoFocus
-                />
-
-                <select
-                  value={newEvent.type}
-                  onChange={(e) => setNewEvent({ ...newEvent, type: e.target.value })}
-                  className="event-select"
-                >
-                  {Object.entries(eventTypes).map(([key, type]) => (
-                    <option key={key} value={key}>
-                      {type.icon} {type.label}
-                    </option>
-                  ))}
-                </select>
-
-                <input
-                  type="time"
-                  value={newEvent.time}
-                  onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
-                  className="event-input"
-                  placeholder="Hora (opcional)"
-                />
-
-                <div className="modal-actions">
-                  <button type="submit" className="btn-primary">Agregar</button>
-                  <button 
-                    type="button" 
-                    onClick={() => setShowEventModal(false)}
-                    className="btn-secondary"
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </form>
-
-              {/* Mostrar eventos existentes de este día */}
-              {getEventsForDate(new Date(selectedDate).getDate()).length > 0 && (
-                <div className="day-events-list">
-                  <h4>Eventos de este día:</h4>
-                  {getEventsForDate(new Date(selectedDate).getDate()).map(event => (
+              {/* Mostrar eventos existentes de este día PRIMERO */}
+              {getEventsForDate(new Date(selectedDate + 'T00:00:00').getDate()).length > 0 && (
+                <div className="day-events-list" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
+                  <h4>Eventos ({getEventsForDate(new Date(selectedDate + 'T00:00:00').getDate()).length}):</h4>
+                  {getEventsForDate(new Date(selectedDate + 'T00:00:00').getDate()).map(event => (
                     <div key={event.id} className="day-event-item">
                       <span style={{ color: eventTypes[event.type].color }}>
                         {eventTypes[event.type].icon}
@@ -313,6 +282,54 @@ function Calendar({ username }) {
                   ))}
                 </div>
               )}
+
+              {/* Formulario para agregar nuevo evento */}
+              <div style={{ marginTop: getEventsForDate(new Date(selectedDate + 'T00:00:00').getDate()).length > 0 ? '20px' : '0', paddingTop: getEventsForDate(new Date(selectedDate + 'T00:00:00').getDate()).length > 0 ? '20px' : '0', borderTop: getEventsForDate(new Date(selectedDate + 'T00:00:00').getDate()).length > 0 ? '2px solid #f0f0f0' : 'none' }}>
+                <h4 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: '700', color: '#333' }}>
+                  {getEventsForDate(new Date(selectedDate + 'T00:00:00').getDate()).length > 0 ? 'Agregar otro evento:' : ''}
+                </h4>
+                <form onSubmit={handleAddEvent}>
+                  <input
+                    type="text"
+                    value={newEvent.title}
+                    onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+                    placeholder="Título del evento"
+                    className="event-input"
+                    autoFocus
+                  />
+
+                  <select
+                    value={newEvent.type}
+                    onChange={(e) => setNewEvent({ ...newEvent, type: e.target.value })}
+                    className="event-select"
+                  >
+                    {Object.entries(eventTypes).map(([key, type]) => (
+                      <option key={key} value={key}>
+                        {type.icon} {type.label}
+                      </option>
+                    ))}
+                  </select>
+
+                  <input
+                    type="time"
+                    value={newEvent.time}
+                    onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
+                    className="event-input"
+                    placeholder="Hora (opcional)"
+                  />
+
+                  <div className="modal-actions">
+                    <button type="submit" className="btn-primary">Agregar</button>
+                    <button 
+                      type="button" 
+                      onClick={() => setShowEventModal(false)}
+                      className="btn-secondary"
+                    >
+                      {getEventsForDate(new Date(selectedDate + 'T00:00:00').getDate()).length > 0 ? 'Cerrar' : 'Cancelar'}
+                    </button>
+                  </div>
+                </form>
+              </div>
             </motion.div>
           </motion.div>
         )}
