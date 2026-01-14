@@ -155,6 +155,60 @@
   padding: 2px;
 }
 
+/* Responsive para móviles */
+@media (max-width: 767px) {
+  .widget-bar {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .widget {
+    padding: 16px;
+  }
+
+  .widget-icon {
+    font-size: 32px;
+  }
+
+  .weather-temp {
+    font-size: 24px;
+  }
+
+  .weather-condition {
+    font-size: 13px;
+  }
+
+  .datetime-date {
+    font-size: 13px;
+  }
+
+  .datetime-time {
+    font-size: 20px;
+  }
+
+  .greeting-text {
+    font-size: 18px;
+  }
+
+  .events-widget-title {
+    font-size: 12px;
+  }
+
+  .event-widget-item {
+    font-size: 12px;
+    padding: 5px 8px;
+  }
+
+  .event-widget-icon {
+    font-size: 12px;
+  }
+
+  .event-widget-time {
+    font-size: 10px;
+  }
+}
+
 /* Responsive para tablets */
 @media (min-width: 768px) {
   .widget-bar {

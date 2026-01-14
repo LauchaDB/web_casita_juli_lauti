@@ -208,6 +208,77 @@
   box-shadow: 0 -4px 20px rgba(255, 107, 107, 0.3);
 }
 
+/* Responsive para móviles */
+@media (max-width: 767px) {
+  .tasks-view {
+    padding: 20px 12px;
+  }
+
+  .add-task-form-view {
+    padding: 16px;
+    gap: 12px;
+    flex-direction: column;
+  }
+
+  .task-input-view {
+    font-size: 16px;
+    padding: 14px 16px;
+  }
+
+  .add-button-view {
+    font-size: 16px;
+    padding: 14px 24px;
+    width: 100%;
+  }
+
+  .mute-button-view {
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 50;
+  }
+
+  .tasks-container-view {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .task-card-view {
+    padding: 20px;
+  }
+
+  .task-text-view {
+    font-size: 16px;
+  }
+
+  .task-footer-view {
+    font-size: 12px;
+  }
+
+  .task-author-view {
+    font-size: 13px;
+  }
+
+  .task-time-view {
+    font-size: 11px;
+  }
+
+  .empty-state-view {
+    padding: 60px 20px;
+  }
+
+  .empty-state-view p {
+    font-size: 24px;
+  }
+
+  .empty-subtitle-view {
+    font-size: 16px !important;
+  }
+}
+
 /* Responsive para tablets */
 @media (min-width: 768px) {
   .tasks-view {

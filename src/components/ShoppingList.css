@@ -229,6 +229,79 @@
   transform: scale(1.1);
 }
 
+/* Responsive para móviles */
+@media (max-width: 767px) {
+  .shopping-list {
+    padding: 20px 12px;
+  }
+
+  .shopping-header {
+    padding: 16px;
+  }
+
+  .shopping-stats {
+    gap: 20px;
+  }
+
+  .stat-number {
+    font-size: 28px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+  }
+
+  .add-item-form {
+    padding: 16px;
+    gap: 12px;
+    flex-direction: column;
+  }
+
+  .item-input {
+    font-size: 16px;
+    padding: 14px 16px;
+  }
+
+  .add-item-button {
+    font-size: 16px;
+    padding: 14px 24px;
+    width: 100%;
+  }
+
+  .items-container {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .item-card {
+    padding: 16px;
+  }
+
+  .item-text {
+    font-size: 16px;
+  }
+
+  .checkbox {
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+  }
+
+  .delete-item-button {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .empty-state-shopping {
+    padding: 60px 20px;
+  }
+
+  .empty-state-shopping p {
+    font-size: 24px;
+  }
+}
+
 /* Responsive para tablets */
 @media (min-width: 768px) {
   .shopping-list {

@@ -112,6 +112,42 @@
   z-index: 1;
 }
 
+/* Responsive para móviles */
+@media (max-width: 767px) {
+  .main-header {
+    padding: 16px 0;
+  }
+
+  .header-content-main {
+    padding: 0 16px;
+  }
+
+  .main-header h1 {
+    font-size: 24px;
+  }
+
+  .emoji-icon {
+    font-size: 28px;
+  }
+
+  .header-subtitle {
+    font-size: 13px;
+  }
+
+  .username {
+    font-size: 15px;
+  }
+
+  .logout-button {
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+
+  .header-actions {
+    gap: 12px;
+  }
+}
+
 /* Responsive para tablets */
 @media (min-width: 768px) {
   .main-header {

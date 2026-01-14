@@ -55,6 +55,31 @@
   font-size: 16px;
 }
 
+/* Responsive para móviles */
+@media (max-width: 767px) {
+  .navigation {
+    top: 80px;
+  }
+
+  .nav-tabs {
+    padding: 8px 12px;
+    gap: 6px;
+  }
+
+  .nav-tab {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .tab-icon {
+    font-size: 16px;
+  }
+
+  .tab-label {
+    font-size: 13px;
+  }
+}
+
 /* Responsive para tablets */
 @media (min-width: 768px) {
   .navigation {
