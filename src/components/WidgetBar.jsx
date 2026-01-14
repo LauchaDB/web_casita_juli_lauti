@@ -3,7 +3,7 @@ import { ref, onValue } from 'firebase/database';
 import { database } from '../firebase';
 import './WidgetBar.css';
 
-function WidgetBar() {
+function WidgetBar({ username, onLogout, onNavigate }) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [weather, setWeather] = useState({
     temp: '--',
@@ -167,52 +167,82 @@ function WidgetBar() {
   };
 
   return (
-    <div className="widget-bar">
+    <div className="widget-bar-sidebar">
+      {/* Header de la sidebar */}
+      <div className="sidebar-header">
+        <h2 className="sidebar-title">
+          <span className="sidebar-emoji">🏠</span> Casita
+        </h2>
+        <p className="sidebar-subtitle">📍 Av 9 de julio 2274</p>
+      </div>
+
+      {/* Usuario y logout */}
+      {username && (
+        <div className="sidebar-user-section">
+          <span className="sidebar-username">👤 {username}</span>
+          {onLogout && (
+            <button onClick={onLogout} className="sidebar-logout-btn">
+              Salir
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Navegación rápida */}
+      {onNavigate && (
+        <div className="sidebar-nav-section">
+          <button onClick={() => onNavigate('shopping')} className="sidebar-nav-btn">
+            🛒 Compras
+          </button>
+          <button onClick={() => onNavigate('calendar')} className="sidebar-nav-btn">
+            📅 Calendario
+          </button>
+          <button onClick={() => onNavigate('notes')} className="sidebar-nav-btn">
+            📝 Notas
+          </button>
+        </div>
+      )}
+
       {/* Widget de Clima */}
-      <div className="widget weather-widget">
-        <div className="widget-icon">{weather.icon}</div>
-        <div className="widget-content">
-          <div className="weather-temp">{weather.temp}°C</div>
-          <div className="weather-condition">{weather.condition}</div>
+      <div className="sidebar-widget weather-sidebar">
+        <div className="sidebar-widget-icon">{weather.icon}</div>
+        <div className="sidebar-widget-content">
+          <div className="sidebar-weather-temp">{weather.temp}°C</div>
+          <div className="sidebar-weather-condition">{weather.condition}</div>
         </div>
       </div>
 
       {/* Widget de Fecha y Hora */}
-      <div className="widget datetime-widget">
-        <div className="widget-icon">📅</div>
-        <div className="widget-content">
-          <div className="datetime-date">{formatDate()}</div>
-          <div className="datetime-time">{formatTime()}</div>
+      <div className="sidebar-widget datetime-sidebar">
+        <div className="sidebar-widget-icon">📅</div>
+        <div className="sidebar-widget-content">
+          <div className="sidebar-datetime-date">{formatDate()}</div>
+          <div className="sidebar-datetime-time">{formatTime()}</div>
         </div>
-      </div>
-
-      {/* Widget de Saludo */}
-      <div className="widget greeting-widget">
-        <div className="greeting-text">{getGreeting()}</div>
       </div>
 
       {/* Widget de Eventos del Día */}
       {todayEvents.length > 0 && (
-        <div className="widget events-widget">
-          <div className="widget-icon">📅</div>
-          <div className="widget-content">
-            <div className="events-widget-title">Hoy ({todayEvents.length})</div>
-            <div className="events-widget-list">
-              {todayEvents.slice(0, 3).map(event => (
-                <div 
-                  key={event.id} 
-                  className="event-widget-item"
-                  style={{ borderLeftColor: eventTypes[event.type]?.color || '#EC407A' }}
-                >
-                  <span className="event-widget-icon">{eventTypes[event.type]?.icon || '📌'}</span>
-                  <span className="event-widget-text">{event.title}</span>
-                  {event.time && <span className="event-widget-time">{event.time}</span>}
-                </div>
-              ))}
-              {todayEvents.length > 3 && (
-                <div className="events-widget-more">+{todayEvents.length - 3} más en Calendario</div>
-              )}
-            </div>
+        <div className="sidebar-widget events-sidebar">
+          <div className="sidebar-widget-header">
+            <span className="sidebar-widget-icon-small">📅</span>
+            <span className="sidebar-events-title">Hoy ({todayEvents.length})</span>
+          </div>
+          <div className="sidebar-events-list">
+            {todayEvents.slice(0, 3).map(event => (
+              <div 
+                key={event.id} 
+                className="sidebar-event-item"
+                style={{ borderLeftColor: eventTypes[event.type]?.color || '#EC407A' }}
+              >
+                <span className="sidebar-event-icon">{eventTypes[event.type]?.icon || '📌'}</span>
+                <span className="sidebar-event-text">{event.title}</span>
+                {event.time && <span className="sidebar-event-time">{event.time}</span>}
+              </div>
+            ))}
+            {todayEvents.length > 3 && (
+              <div className="sidebar-events-more">+{todayEvents.length - 3} más</div>
+            )}
           </div>
         </div>
       )}

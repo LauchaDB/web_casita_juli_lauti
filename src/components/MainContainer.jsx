@@ -12,7 +12,7 @@ function MainContainer({ username, onLogout }) {
   const renderContent = () => {
     switch (activeTab) {
       case 'tasks':
-        return <TasksView username={username} />;
+        return <TasksView username={username} onLogout={onLogout} onNavigate={setActiveTab} />;
       case 'shopping':
         return <ShoppingList username={username} />;
       case 'calendar':
@@ -20,35 +20,39 @@ function MainContainer({ username, onLogout }) {
       case 'notes':
         return <Notes username={username} />;
       default:
-        return <TasksView username={username} />;
+        return <TasksView username={username} onLogout={onLogout} onNavigate={setActiveTab} />;
     }
   };
 
   return (
     <div className="main-container">
-      {/* Header */}
-      <div className="main-header">
-        <div className="header-content-main">
-          <div className="header-title">
-            <h1><span className="emoji-icon">🏠</span> Casita</h1>
-            <p className="header-subtitle">Av 9 de julio 2274</p>
-          </div>
-          <div className="header-actions">
-            <div className="user-info">
-              <span className="username">{username}</span>
-              <button onClick={onLogout} className="logout-button">
-                Salir
-              </button>
+      {/* Header - oculto cuando activeTab es 'tasks' */}
+      {activeTab !== 'tasks' && (
+        <div className="main-header">
+          <div className="header-content-main">
+            <div className="header-title">
+              <h1><span className="emoji-icon">🏠</span> Casita</h1>
+              <p className="header-subtitle">Av 9 de julio 2274</p>
+            </div>
+            <div className="header-actions">
+              <div className="user-info">
+                <span className="username">{username}</span>
+                <button onClick={onLogout} className="logout-button">
+                  Salir
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Navigation Tabs */}
-      <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+      {/* Navigation Tabs - oculto cuando activeTab es 'tasks' */}
+      {activeTab !== 'tasks' && (
+        <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+      )}
 
       {/* Content */}
-      <div className="main-content">
+      <div className={`main-content ${activeTab === 'tasks' ? 'full-screen' : ''}`}>
         {renderContent()}
       </div>
     </div>

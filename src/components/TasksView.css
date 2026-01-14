@@ -1,7 +1,24 @@
 .tasks-view {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 32px;
   padding: 32px 20px;
   position: relative;
   z-index: 1;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+.tasks-main-column {
+  min-width: 0;
+}
+
+.tasks-sidebar-column {
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
 }
 
 /* Contenedor de widgets */
@@ -44,6 +61,34 @@
   transform: translateY(-1px);
 }
 
+/* Textarea para agregar tareas */
+.task-textarea-view {
+  flex: 1;
+  padding: 18px 20px;
+  font-size: 18px;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+  border-radius: 16px;
+  transition: all 0.3s;
+  background: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 60px;
+  line-height: 1.5;
+}
+
+.task-textarea-view:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+.task-textarea-view::placeholder {
+  color: #999;
+}
+
 .add-button-view {
   padding: 18px 40px;
   font-size: 18px;
@@ -84,9 +129,55 @@
 .tasks-container-view {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  grid-auto-rows: auto;
+  grid-auto-rows: 10px;
+  grid-auto-flow: dense;
   align-items: start;
   gap: 24px;
+  max-height: calc(100vh - 280px);
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  padding-right: 10px;
+}
+
+/* Scrollbar personalizado */
+.tasks-container-view::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tasks-container-view::-webkit-scrollbar-track {
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 10px;
+}
+
+.tasks-container-view::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+}
+
+.tasks-container-view::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #653a8b 100%);
+}
+
+/* Indicador de auto-scroll */
+.auto-scroll-indicator {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 10px 24px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+  z-index: 100;
+  animation: fadeInOut 2s ease-in-out infinite;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
 /* Estado vacío */
@@ -125,6 +216,7 @@
   position: relative;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.3);
+  grid-row-end: span var(--row-span);
 }
 
 .task-card-view::before {
@@ -208,10 +300,174 @@
   box-shadow: 0 -4px 20px rgba(255, 107, 107, 0.3);
 }
 
+/* Nuevos hints de acción */
+.action-hint-view {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-weight: 600;
+  font-size: 12px;
+  opacity: 0;
+  transition: all 0.3s;
+  display: flex;
+  justify-content: space-around;
+  gap: 8px;
+}
+
+.task-card-view:hover .action-hint-view {
+  opacity: 1;
+}
+
+.hint-edit, .hint-delete {
+  flex: 1;
+}
+
+.hint-edit {
+  color: #fff;
+}
+
+.hint-delete {
+  color: #ffcccc;
+}
+
+/* Modo edición */
+.task-card-view.editing {
+  border: 3px solid #667eea;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+}
+
+.task-edit-container {
+  width: 100%;
+}
+
+.task-edit-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 18px;
+  border: 2px solid #667eea;
+  border-radius: 12px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  background: white;
+  color: #2d3748;
+  font-weight: 600;
+}
+
+.task-edit-textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+}
+
+.task-edit-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-save-edit,
+.btn-cancel-edit {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-save-edit {
+  background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+.btn-save-edit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+}
+
+.btn-cancel-edit {
+  background: rgba(255, 107, 107, 0.1);
+  color: #ff6b6b;
+  border: 2px solid #ff6b6b;
+}
+
+.btn-cancel-edit:hover {
+  background: #ff6b6b;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Toast de deshacer */
+.undo-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 1000;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.undo-message {
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.undo-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.undo-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.undo-button:active {
+  transform: translateY(0);
+}
+
 /* Responsive para móviles */
 @media (max-width: 767px) {
   .tasks-view {
+    grid-template-columns: 1fr;
+    gap: 20px;
     padding: 20px 12px;
+  }
+
+  .tasks-sidebar-column {
+    position: relative;
+    top: 0;
+    order: -1;
+    max-height: none;
   }
 
   /* Formulario con grid: input arriba, botones abajo en fila */
@@ -223,11 +479,33 @@
     grid-template-rows: auto auto;
   }
 
-  .task-input-view {
+  .task-input-view,
+  .task-textarea-view {
     grid-column: 1 / -1;
     grid-row: 1;
     font-size: 16px;
     padding: 14px 16px;
+  }
+
+  .task-textarea-view {
+    min-height: 70px;
+  }
+
+  .task-edit-textarea {
+    font-size: 15px;
+    padding: 12px 14px;
+    min-height: 70px;
+  }
+
+  .btn-save-edit,
+  .btn-cancel-edit {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .action-hint-view {
+    font-size: 10px;
+    padding: 8px;
   }
 
   .add-button-view {
@@ -248,6 +526,13 @@
   .tasks-container-view {
     grid-template-columns: 1fr;
     gap: 16px;
+    max-height: calc(100vh - 400px);
+  }
+
+  .auto-scroll-indicator {
+    top: 10px;
+    font-size: 12px;
+    padding: 8px 16px;
   }
 
   .task-card-view {
@@ -281,6 +566,23 @@
   .empty-subtitle-view {
     font-size: 16px !important;
   }
+
+  .undo-toast {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 14px 20px;
+    font-size: 14px;
+  }
+
+  .undo-message {
+    font-size: 14px;
+  }
+
+  .undo-button {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
 }
 
 /* Responsive para tablets */
@@ -294,9 +596,14 @@
     gap: 20px;
   }
 
-  .task-input-view {
+  .task-input-view,
+  .task-textarea-view {
     font-size: 20px;
     padding: 20px 24px;
+  }
+
+  .task-edit-textarea {
+    font-size: 20px;
   }
 
   .add-button-view {
@@ -312,6 +619,7 @@
   .tasks-container-view {
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     gap: 28px;
+    grid-auto-rows: 10px;
   }
 
   .task-card-view {
@@ -320,6 +628,19 @@
 
   .task-text-view {
     font-size: 24px;
+  }
+
+  .undo-toast {
+    padding: 18px 28px;
+  }
+
+  .undo-message {
+    font-size: 17px;
+  }
+
+  .undo-button {
+    padding: 12px 24px;
+    font-size: 15px;
   }
 }
 
@@ -333,9 +654,14 @@
     padding: 36px;
   }
 
-  .task-input-view {
+  .task-input-view,
+  .task-textarea-view {
     font-size: 22px;
     padding: 22px 28px;
+  }
+
+  .task-edit-textarea {
+    font-size: 22px;
   }
 
   .add-button-view {
@@ -358,6 +684,7 @@
 
   .tasks-container-view {
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-auto-rows: 10px;
   }
 
   .empty-state-view {
@@ -370,5 +697,18 @@
 
   .empty-subtitle-view {
     font-size: 24px !important;
+  }
+
+  .undo-toast {
+    padding: 20px 32px;
+  }
+
+  .undo-message {
+    font-size: 18px;
+  }
+
+  .undo-button {
+    padding: 14px 28px;
+    font-size: 16px;
   }
 }
