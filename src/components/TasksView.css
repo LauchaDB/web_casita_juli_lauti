@@ -1,0 +1,299 @@
+.tasks-view {
+  padding: 32px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Contenedor de widgets */
+.widgets-container-view {
+  margin-bottom: 32px;
+}
+
+/* Formulario de agregar tarea */
+.add-task-container-view {
+  margin-bottom: 32px;
+}
+
+.add-task-form-view {
+  display: flex;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 28px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.task-input-view {
+  flex: 1;
+  padding: 18px 20px;
+  font-size: 18px;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+  border-radius: 16px;
+  transition: all 0.3s;
+  background: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.task-input-view:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+.add-button-view {
+  padding: 18px 40px;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.add-button-view:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+}
+
+.mute-button-view {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  font-size: 24px;
+  width: 52px;
+  padding: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.mute-button-view:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+}
+
+/* Contenedor de tareas */
+.tasks-container-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-auto-rows: auto;
+  align-items: start;
+  gap: 24px;
+}
+
+/* Estado vacío */
+.empty-state-view {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  border: 2px dashed rgba(102, 126, 234, 0.3);
+}
+
+.empty-state-view p {
+  font-size: 32px;
+  margin: 0 0 12px 0;
+  color: #667eea;
+  font-weight: 600;
+}
+
+.empty-subtitle-view {
+  font-size: 20px !important;
+  color: #764ba2 !important;
+  font-weight: 500 !important;
+}
+
+/* Tarjeta de tarea */
+.task-card-view {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.task-card-view::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.task-card-view:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3);
+}
+
+.task-card-view:hover::before {
+  opacity: 1;
+}
+
+.task-card-view:hover .delete-hint-view {
+  opacity: 1;
+}
+
+.task-content-view {
+  position: relative;
+  z-index: 1;
+}
+
+.task-text-view {
+  font-size: 20px;
+  line-height: 1.7;
+  color: #2d3748;
+  margin: 0 0 20px 0;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.task-footer-view {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.task-author-view {
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 15px;
+}
+
+.task-time-view {
+  color: #a0aec0;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.delete-hint-view {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+  text-align: center;
+  padding: 14px;
+  font-weight: 700;
+  font-size: 14px;
+  opacity: 0;
+  transition: all 0.3s;
+  box-shadow: 0 -4px 20px rgba(255, 107, 107, 0.3);
+}
+
+/* Responsive para tablets */
+@media (min-width: 768px) {
+  .tasks-view {
+    padding: 32px;
+  }
+
+  .add-task-form-view {
+    padding: 32px;
+    gap: 20px;
+  }
+
+  .task-input-view {
+    font-size: 20px;
+    padding: 20px 24px;
+  }
+
+  .add-button-view {
+    font-size: 20px;
+    padding: 20px 48px;
+  }
+
+  .mute-button-view {
+    width: 56px;
+    font-size: 26px;
+  }
+
+  .tasks-container-view {
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 28px;
+  }
+
+  .task-card-view {
+    padding: 36px;
+  }
+
+  .task-text-view {
+    font-size: 24px;
+  }
+}
+
+/* Optimización para pantallas grandes */
+@media (min-width: 1024px) {
+  .tasks-view {
+    padding: 32px 48px;
+  }
+
+  .add-task-form-view {
+    padding: 36px;
+  }
+
+  .task-input-view {
+    font-size: 22px;
+    padding: 22px 28px;
+  }
+
+  .add-button-view {
+    font-size: 22px;
+    padding: 22px 56px;
+  }
+
+  .mute-button-view {
+    width: 60px;
+    font-size: 30px;
+  }
+
+  .task-card-view {
+    padding: 40px;
+  }
+
+  .task-text-view {
+    font-size: 28px;
+  }
+
+  .tasks-container-view {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  }
+
+  .empty-state-view {
+    padding: 100px 40px;
+  }
+
+  .empty-state-view p {
+    font-size: 38px;
+  }
+
+  .empty-subtitle-view {
+    font-size: 24px !important;
+  }
+}
