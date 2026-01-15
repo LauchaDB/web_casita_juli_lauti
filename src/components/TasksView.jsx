@@ -11,6 +11,7 @@ function TasksView({ username, onLogout, onNavigate }) {
   const [isMuted, setIsMuted] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [editText, setEditText] = useState('');
+  const [showEditModal, setShowEditModal] = useState(false);
   const [deletedTask, setDeletedTask] = useState(null);
   const [showUndoToast, setShowUndoToast] = useState(false);
   const audioRef = useRef(null);
@@ -126,24 +127,27 @@ function TasksView({ username, onLogout, onNavigate }) {
   };
 
   const handleEditTask = (task) => {
-    setEditingTask(task.id);
+    setEditingTask(task);
     setEditText(task.text);
+    setShowEditModal(true);
   };
 
   const handleSaveEdit = () => {
     if (editText.trim() && editingTask) {
-      const taskRef = ref(database, `tasks/${editingTask}`);
+      const taskRef = ref(database, `tasks/${editingTask.id}`);
       update(taskRef, {
         text: editText.trim()
       });
       setEditingTask(null);
       setEditText('');
+      setShowEditModal(false);
     }
   };
 
   const handleCancelEdit = () => {
     setEditingTask(null);
     setEditText('');
+    setShowEditModal(false);
   };
 
   const handleCardClick = (task) => {
@@ -185,9 +189,12 @@ function TasksView({ username, onLogout, onNavigate }) {
     setIsMuted(!isMuted);
   };
 
-  // Ajustar el tamaño de las cards en el grid
+  // Ajustar el tamaño de las cards en el grid (solo en tablet/desktop)
   useEffect(() => {
     const resizeGridItems = () => {
+      // Solo aplicar masonry en pantallas >= 768px
+      if (window.innerWidth < 768) return;
+
       const grid = tasksContainerRef.current;
       if (!grid) return;
 
@@ -214,9 +221,13 @@ function TasksView({ username, onLogout, onNavigate }) {
       resizeObserver.observe(tasksContainerRef.current);
     }
 
+    // Listener para cambios de tamaño de ventana
+    window.addEventListener('resize', resizeGridItems);
+
     return () => {
       clearTimeout(timeoutId);
       resizeObserver.disconnect();
+      window.removeEventListener('resize', resizeGridItems);
     };
   }, [tasks]);
 
@@ -349,66 +360,31 @@ function TasksView({ username, onLogout, onNavigate }) {
             {tasks.map((task) => (
               <motion.div
                 key={task.id}
-                className={`task-card-view ${editingTask === task.id ? 'editing' : ''}`}
+                className="task-card-view"
                 initial={{ opacity: 0, y: -20, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 100, scale: 0.8 }}
                 transition={{ duration: 0.3 }}
-                onClick={() => editingTask !== task.id && handleCardClick(task)}
+                onClick={() => handleCardClick(task)}
               >
                 <div className="task-content-view">
-                  {editingTask === task.id ? (
-                    // Modo edición
-                    <div className="task-edit-container">
-                      <textarea
-                        value={editText}
-                        onChange={(e) => setEditText(e.target.value)}
-                        onKeyDown={handleEditKeyDown}
-                        className="task-edit-textarea"
-                        autoFocus
-                        rows="3"
-                      />
-                      <div className="task-edit-actions">
-                        <button 
-                          onClick={handleSaveEdit}
-                          className="btn-save-edit"
-                          title="Ctrl+Enter para guardar"
-                        >
-                          ✅ Guardar
-                        </button>
-                        <button 
-                          onClick={handleCancelEdit}
-                          className="btn-cancel-edit"
-                          title="Esc para cancelar"
-                        >
-                          ❌ Cancelar
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    // Modo visualización
-                    <>
-                      <p className="task-text-view">{task.text}</p>
-                      <div className="task-footer-view">
-                        <span className="task-author-view">👤 {task.createdBy}</span>
-                        <span className="task-time-view">
-                          {new Date(task.timestamp).toLocaleString('es-ES', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            day: '2-digit',
-                            month: '2-digit'
-                          })}
-                        </span>
-                      </div>
-                    </>
-                  )}
-                </div>
-                {editingTask !== task.id && (
-                  <div className="action-hint-view">
-                    <span className="hint-edit">1 click: Editar</span>
-                    <span className="hint-delete">2 clicks: Eliminar</span>
+                  <p className="task-text-view">{task.text}</p>
+                  <div className="task-footer-view">
+                    <span className="task-author-view">👤 {task.createdBy}</span>
+                    <span className="task-time-view">
+                      {new Date(task.timestamp).toLocaleString('es-ES', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        day: '2-digit',
+                        month: '2-digit'
+                      })}
+                    </span>
                   </div>
-                )}
+                </div>
+                <div className="action-hint-view">
+                  <span className="hint-edit">1 click: Editar</span>
+                  <span className="hint-delete">2 clicks: Eliminar</span>
+                </div>
               </motion.div>
             ))}
           </AnimatePresence>
@@ -438,6 +414,58 @@ function TasksView({ username, onLogout, onNavigate }) {
             >
               ↶ Deshacer
             </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal de edición */}
+      <AnimatePresence>
+        {showEditModal && editingTask && (
+          <motion.div
+            className="modal-overlay-edit"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={handleCancelEdit}
+          >
+            <motion.div
+              className="modal-content-edit"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3>Editar Pendiente</h3>
+              <p className="modal-task-author">Creado por: {editingTask.createdBy}</p>
+              
+              <textarea
+                value={editText}
+                onChange={(e) => setEditText(e.target.value)}
+                onKeyDown={handleEditKeyDown}
+                className="modal-edit-textarea"
+                autoFocus
+                placeholder="Escribe el pendiente..."
+                rows="6"
+              />
+
+              <div className="modal-edit-actions">
+                <button 
+                  onClick={handleSaveEdit}
+                  className="btn-modal-save"
+                  disabled={!editText.trim()}
+                >
+                  ✅ Guardar
+                </button>
+                <button 
+                  onClick={handleCancelEdit}
+                  className="btn-modal-cancel"
+                >
+                  ❌ Cancelar
+                </button>
+              </div>
+
+              <p className="modal-hint">💡 Tip: Ctrl+Enter para guardar, Esc para cancelar</p>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
